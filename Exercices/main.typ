@@ -142,13 +142,13 @@
     0, dots.down, dots.down, dots.down, 0;
     dots.v, dots.down, -1,2,-1;
     0, dots.c, 0, -1, 2;
-  )$. It suffices that the eigenvalues of $bold(A)^(-1)$ are positive and less than 1 to have the discrete maximum principle. It can be seen (check @tridial) that the eigenvalues of the tridiagonal matrix $bold(B)$ are 
+  )$. It suffices that the eigenvalues of $bold(A)^(-1)$ are positive and less than or equal to 1 to have the discrete maximum principle. It can be seen (check @tridial) that the eigenvalues of the tridiagonal matrix $bold(B)$ are 
   $
-    lambda_k = 2 - 2 cos((k pi)/(N+1)), quad k=1,...,N
+    mu_k = 2 - 2 cos((k pi)/(N+1)), quad k=1,...,N
   $
   which implies that the eigenvalues of $bold(A)^(-1)$ are
   $
-    mu_k = 1/(1 + lambda lambda_k) = 1/(1 + lambda (2 - 2 cos((k pi)/(N+1)))), quad k=1,...,N
+    mu_k = 1/(1 + lambda mu_k) = 1/(1 + lambda (2 - 2 cos((k pi)/(N+1)))), quad k=1,...,N
   $
   which are positive and less or equal to 1. Thus, the implicit scheme satisfies the discrete maximum principle.
 ]
@@ -172,16 +172,16 @@
   Let $bold(B) := bold(A)_1^(-1) bold(A)_2$. We then have:
   $
     bold(u)^(n+1) - bold(v)^(n+1) &= bold(B) (bold(u)^n - bold(v)^n) - bold(A)_1^(-1) bold(T)^n \
-    &<= bold(B) (bold(u)^n - bold(v)^n) - bold(A)_1^(-1) bold(T)^n \
-    &<= bold(B)^2 (bold(u)^(n-1) - bold(v)^(n-1)) - bold(B) bold(A)_1^(-1) bold(T)^(n-1) - bold(A)_1^(-1) bold(T)^n \
-    &<= bold(B)^(n+1) (bold(u)^0 - bold(v)^0) - sum_(k=0)^n bold(B)^k bold(A)_1^(-1) bold(T)^(n-k) \
+    &= bold(B)^2 (bold(u)^(n-1) - bold(v)^(n-1)) - bold(B) bold(A)_1^(-1) bold(T)^(n-1) - bold(A)_1^(-1) bold(T)^n \
+    &= dots.c \
+    &= bold(B)^(n+1) (bold(u)^0 - bold(v)^0) - sum_(k=0)^n bold(B)^k bold(A)_1^(-1) bold(T)^(n-k) \
     &= - sum_(k=0)^n bold(B)^k bold(A)_1^(-1) bold(T)^(n-k)
   $<eq:convergence>
-  If we assume that the scheme is consistent of order $p$ in space and $q$ in time we have that $||bold(T^n)|| = Order((Delta t)^q + (Delta x)^p)$. Now, it can be seen that stability condition is equivalent to having $norm(bold(B)^k)<=K$ $forall k in NN$ and $K$ given in @eq:stability. Indeed, if we have @eq:stability, then:
+  If we assume that the scheme is consistent of order $p$ in space and $q$ in time we have that $||bold(T)^n|| = Order((Delta t)^q + (Delta x)^p)$. Now, it can be seen that stability condition is equivalent to having $norm(bold(B)^k)<=K$ $forall k in NN$ and $K$ given in @eq:stability. Indeed, if we have @eq:stability, then:
   $
     bold(u)^k = bold(B) bold(u)^(k -1) = ... = bold(B)^k bold(u)^0 ==> norm(bold(B)^k bold(u)^0) = norm(bold(u)^k) <= K norm(bold(u)^0)
   $
-  which from the definition of matrix norm implies that $norm(bold(B)^k)<=C$, and this is valid $forall k$ such that $k Delta t<=T$. Now suppose that we have $norm(bold(B)^k)<=K$, then:
+  which from the definition of matrix norm implies that $norm(bold(B)^k)<=K$, and this is valid $forall k$ such that $k Delta t<=T$. Now suppose that we have $norm(bold(B)^k)<=K$, then:
   $
     norm(bold(u)^k)=norm(bold(B)^k bold(u)^0)<=K norm(bold(u)^0)
   $
@@ -190,7 +190,8 @@
     ||bold(u)^(n+1) - bold(v)^(n+1)|| &<= sum_(k=0)^n norm(bold(B)^k) norm(bold(A)_1^(-1)) norm(bold(T)^(n-k))\
     & <= K C Delta t sum_(k=0)^n norm(bold(T)^(n-k)) \
     & =  K C (n + 1) Delta t Order((Delta t)^q + (Delta x)^p) \
-    & <= K C (T + Delta t) Order((Delta t)^q + (Delta x)^p)
+    & <= (T + Delta t) Order((Delta t)^q + (Delta x)^p) \
+    & = Order((Delta t)^q + (Delta x)^p)
   $ 
   which goes to zero as $Delta t$ and $Delta x$ go to zero at the same order as the consistency of the scheme.
 ]
@@ -267,20 +268,21 @@
     $
       cal(F)_(j+1/2) = -pdv(u,x)(x_(j+1/2))
     $
-    the exact flux in $x_(j+1/2)$ and $h=max_j(h_j)$ show the "consistancy of fluxes", in the sense that:
+    the exact flux in $x_(j+1/2)$ and $h=max_j h_j$ show the "consistancy of fluxes", in the sense that:
     $
-    |cal(F)_(j+1/2) - tilde(F)_(j+1/2)| <= C_1 h quad "with" C_1 > 0
+    |cal(F)_(j+1/2) - F_(j+1/2)| <= C_1 h quad "with" C_1 > 0
     $
+    where $F_(j+1/2) = -(u(x_(j+1)) - u(x_j))/h_(j+1/2)$.
     Under which hypothesis on the mesh is the approximation 2nd order? That is to say, satisfying
     $
-      |cal(F)_(j+1/2) - tilde(F)_(j+1/2)| <= C_2 h^2 quad "with" C_2 > 0
+      |cal(F)_(j+1/2) - F_(j+1/2)| <= C_2 h^2 quad "with" C_2 > 0
     $
     #solution[
       Using @eq:fvpoisson the numerical fluxes are 
       $
         tilde(F)_(j+1/2) = -(u_(j+1) - u_j)/h_(j+1/2), quad forall j=1,...,N
       $
-      and we define $F_(j+1/2) := -(u(x_(j+1)) - u(x_j))/h_(j+1/2)$. Recall the definitions of $h_(j+1/2)^+$ and $h_(j+1/2)^-$. Then:
+      Recall the definitions of $h_(j+1/2)^+$ and $h_(j+1/2)^-$. Then:
       $
         u(x_(j+1)) &= u(x_(j+1/2)) + pdv(u,x)(x_(j+1/2))h_(j+1/2)^+ + 1/2 pdv(u,x,2)(xi_(j+1/2))( h_(j+1/2)^+)^2\
         u(x_j) &= u(x_(j+1/2)) -  pdv(u,x)(x_(j+1/2))h_(j+1/2)^- + 1/2 pdv(u,x,2)(eta_(j+1/2)) (h_(j+1/2)^-)^2
@@ -311,23 +313,26 @@
         tilde(F)_(j+1/2) - tilde(F)_(j-1/2) &= overline(f)_j h_j\
         cal(F)_(j+1/2) - F_(j+1/2) &= T_(j+1/2) quad "with" |T_(j+1/2)| <= C_1 h
       $ <eq:Fs>
-      Now we have that:
+      Now, we have that:
       $
         F_(j+1/2) - tilde(F)_(j+1/2) &= - (e_(j+1) - e_j)/h_(j+1/2) 
       $ <eq:errorF>
       Thus, putting together @eq:Fs and @eq:errorF we get:
       $
-        (e_(j+1) - e_j)/h_(j+1/2) - (e_(j) - e_(j-1))/h_(j-1/2) = -T_(j+1/2)+T_(j-1/2), quad forall j=1,...,N
+        tilde(F)_(j+1/2) - tilde(F)_(j-1/2) &= cal(F)_(j+1/2) - cal(F)_(j-1/2) \
+        (tilde(F)_(j+1/2)-F_(j+1/2)) - (tilde(F)_(j-1/2)-F_(j-1/2)) &=(cal(F)_(j+1/2) - F_(j+1/2)) - (cal(F)_(j-1/2) -F_(j-1/2)) \
+
+        (e_(j+1) - e_j)/h_(j+1/2) - (e_(j) - e_(j-1))/h_(j-1/2) &= T_(j+1/2)-T_(j-1/2), quad forall j=1,...,N
       $
       Multiplying this last expression by $e_j$ and summing over all $j$ we get:
       $
-        sum_(j=1)^N ((e_(j+1)-e_j)e_j)/h_(j+1/2) - sum_(j=1)^N ((e_(j)-e_(j-1))e_j)/h_(j-1/2) &= -sum_(j=1)^N T_(j+1/2)e_j + sum_(j=1)^N T_(j-1/2)e_j\
-        (e_(N+1) - e_N)e_N/h_(N+1/2) - sum_(j=1)^(N-1)((e_(j+1)-e_j)e_j)/h_(j+1/2) - &(e_1 - e_0)e_1/h_(1/2) - sum_(j=1)^(N-1) ((e_(j+1)-e_j)e_j)/h_(j+1/2) =\ 
-        &= -T_(N+1/2)e_N -sum_(j=1)^N T_(j+1/2)e_j + T_(1/2) e_1+ sum_(j=1)^(N-1) T_(j+1/2)e_(j+1) \
-        -e_N^2/(h_(N+1/2)) - e_1^2/(h_(1/2)) - sum_(j=1)^(N-1) ((e_(j+1)-e_j)^2)/h_(j+1/2) &= -T_(N+1/2)e_N + T_(1/2) e_1 + sum_(j=1)^(N-1) T_(j+1/2)(e_(j+1)-e_j)\
-        sum_(j=0)^(N) ((e_(j+1)-e_j)^2)/h_(j+1/2) &= - sum_(j=0)^(N) T_(j+1/2)(e_(j+1)-e_j)\
+        sum_(j=1)^N ((e_(j+1)-e_j)e_j)/h_(j+1/2) - sum_(j=1)^N ((e_(j)-e_(j-1))e_j)/h_(j-1/2) &= sum_(j=1)^N T_(j+1/2)e_j - sum_(j=1)^N T_(j-1/2)e_j\
+        (e_(N+1) - e_N)e_N/h_(N+1/2) + sum_(j=1)^(N-1)((e_(j+1)-e_j)e_j)/h_(j+1/2) - &(e_1 - e_0)e_1/h_(1/2) - sum_(j=1)^(N-1) ((e_(j+1)-e_j)e_(j+1))/h_(j+1/2) =\ 
+        &= T_(N+1/2)e_N +sum_(j=1)^(N-1) T_(j+1/2)e_j - T_(1/2) e_1- sum_(j=1)^(N-1) T_(j+1/2)e_(j+1) \
+        -e_N^2/(h_(N+1/2)) - e_1^2/(h_(1/2)) - sum_(j=1)^(N-1) ((e_(j+1)-e_j)^2)/h_(j+1/2) &= T_(N+1/2)e_N - T_(1/2) e_1 - sum_(j=1)^(N-1) T_(j+1/2)(e_(j+1)-e_j)\
+        sum_(j=0)^(N) ((e_(j+1)-e_j)^2)/h_(j+1/2) &=  sum_(j=0)^(N) T_(j+1/2)(e_(j+1)-e_j)\
       $
-      Finally taking absolutes values an using Cauchy-Schwarz inequality we get:
+      Finally taking absolutes values and using Cauchy-Schwarz inequality we get:
       $
         sum_(j=0)^(N) ((e_(j+1)-e_j)^2)/h_(j+1/2) &<= C_1 h sum_(j=0)^(N) (|e_(j+1)-e_j|)/ sqrt(h_(j+1/2)) sqrt(h_(j+1/2))\
         &<= C_1 h sqrt(sum_(j=0)^(N) ((e_(j+1)-e_j)^2)/h_(j+1/2)) sqrt(sum_(j=0)^(N) h_(j+1/2))\

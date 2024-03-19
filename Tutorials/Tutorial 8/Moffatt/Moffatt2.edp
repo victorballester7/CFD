@@ -1,0 +1,53 @@
+// Stokes flow: Moffatt Vortices
+// Velocity pressure formulation
+// E. Dormy 2016
+
+
+// Domain Size
+real L=2;
+// Grid density
+int NN=100;
+
+// Triangular domain
+border Gamma1(t=0,0.5){x=t;y=-2*L*t;};
+border Gamma2(t=0,0.5){x=0.5+t;y=L*(2*t-1);};
+border Gamma3(t=0,1){x=1-t;y=0;};
+mesh Th=buildmesh(Gamma1(NN)+Gamma2(NN)+Gamma3(NN));
+
+plot (Th,wait=true);
+
+// Finite element spaces for velocity and pressure
+fespace Uh(Th, P1);
+fespace Vh(Th, P1);
+
+Uh u;
+Uh v;
+Uh uh;
+Uh vh;
+Vh p;
+Vh ph;
+
+// Stokes equations
+
+problem Stokes([u,v,p], [uh,vh,ph]) =
+   int2d(Th) (dx(u)*dx(uh) + dy(u)*dy(uh) )
+ + int2d(Th) (dx(v)*dx(vh) + dy(v)*dy(vh) )
+ - int2d(Th) (p*dx(uh))
+ - int2d(Th) (p*dy(vh))
+ + int2d(Th) (dx(u)*ph + dy(v)*ph)
+ + on(3,u=1,v=0)
+ + on (1,2, u=0.0, v=0.0 );
+
+//  Solve the steady Stokes equations.
+Stokes;
+
+// Compute Streamlines
+Vh psi,phi;
+solve streamlines(psi,phi) =
+     int2d(Th)( dx(psi)*dx(phi) + dy(psi)*dy(phi))
+   + int2d(Th)( -phi*(dy(u)-dx(v)))
+   + on(1,2,3,psi=0);
+
+//plot (psi, nbiso=60, fill=0);
+plot(psi, wait=true, fill=0, nbiso=50);
+plot(psi, wait=true, fill=0, nbiso=5000);

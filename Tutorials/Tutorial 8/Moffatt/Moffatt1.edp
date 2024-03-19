@@ -1,0 +1,36 @@
+// Stokes flow: Moffatt Vortices
+// Streamfunction formulation
+// E. Dormy 2016
+
+// Use Morley elements for a bi-harmonic problem
+load "Morley"
+
+// Domain Size
+real L=2;
+// Grid density
+int NN=10;
+
+// Triangular domain
+border Gamma1(t=0,0.5){x=t;y=-2*L*t;};
+border Gamma2(t=0,0.5){x=0.5+t;y=L*(2*t-1);};
+border Gamma3(t=0,1){x=1-t;y=0;};
+mesh Th=buildmesh(Gamma1(NN)+Gamma2(NN)+Gamma3(NN));
+
+// Finite element space
+fespace Vh(Th,P2Morley);      
+
+macro bilaplacien(u,v) ( dxx(u)*dxx(v)+dyy(u)*dyy(v)+2.*dxy(u)*dxy(v)) //
+
+Vh [u,ux,uy],[v,vx,vy];
+
+problem Bilap([u,ux,uy],[v,vx,vy]) = int2d(Th)(  bilaplacien(u,v) )
+                                   + on(1,2,3,u=0,ux=0,uy=1); 
+
+Bilap;
+plot(u, wait=true, fill=0, nbiso=50);
+plot(u, wait=true, fill=0, nbiso=5000);
+
+Th=adaptmesh(Th,u);
+Bilap;
+plot(u, wait=true, fill=0, nbiso=5000);
+
