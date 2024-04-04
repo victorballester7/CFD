@@ -35,7 +35,7 @@
 
 
 #align(center, text(25pt)[
-  *Tutorial 4*
+  *Exercices*
 ])
 #align(center, text(15pt)[
   Víctor Ballester Ribó\ \
